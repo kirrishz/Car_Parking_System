@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public abstract class UocParkManager implements CarParkManager {
+	//private Vehicle[] vehicleParkingSlots = new Vehicle[20];//parking space array to store vehicle objects
 	static Scanner input = new Scanner(System.in);
-	
+	//private Vehicle lastEntry = null;//to find the last entry of the vehicle which was entered
+
+	//private ArrayList<Integer> vehicleOrderList = new ArrayList<Integer>();//is used to have the index of the vehicles
+	//which are currently parked in the last in First out approach
+	//private ArrayList<Vehicle> deletedTempVehicleList = new ArrayList<Vehicle>();//stores the vehicle object which had left the parking space
+
 	public static void main(String[] args) {
 		System.out.println(" ---------------------------------------------");
 		System.out.println(" |********-Car Park Management System-********|");
@@ -74,6 +80,6 @@ public abstract class UocParkManager implements CarParkManager {
 			}
 		}
 	}
-
+//---------sanjana -------
 
 }
