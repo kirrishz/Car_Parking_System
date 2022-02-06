@@ -153,6 +153,34 @@ public abstract class UocParkManager implements CarParkManager {
 		System.out.println("Vehicle parked Sucessfully!");
 		System.out.println("No of free slots remaining is " + totalOfSlots());
 		//_______
+		public int checkForFreeSlot(String VehicleType) {
+			for (int i = 0; i < 20; i++) { // iterating through each slot to find a
+				// free spot
+				if (vehicleParkingSlots[i] == null) {
+					if (VehicleType.equalsIgnoreCase("van")) { // if its a van need
+						// to check whether
+						// adjacent slot is
+						// also free
+						if (vehicleParkingSlots[i + 1] == null) {
+							return i;
+						}
+					} else { // since one slot is sufficient for cars and bikes
+						return i;
+					}
+				}
+			}
+			return -1; // if there is no free slots
+		}
+
+		public int totalOfSlots() {
+			int number = 0;
+			for (int i = 0; i < 20; i++) {
+				if (vehicleParkingSlots[i] == null) {
+					++number;
+				}
+			}
+			return number;
+		}
 		public void deleteVehicle() {
 			boolean foundFlag = false;
 			int i;
@@ -185,6 +213,78 @@ public abstract class UocParkManager implements CarParkManager {
 				vehicleParkingSlots[i] = null;
 			}
 			vehicleOrderList.remove(i);
+
+		}
+		public void printStatistics() {
+			printVehiclePercentage(); // method call of the method which prints
+			// vehicle percentage
+			printFirstAndLastVehicle();
+		}
+
+		private void printVehiclePercentage() {
+			int car = 0, van = 0, bike = 0, total = 0;
+			String vehicleType;
+			for (int i = 0; i < 20; i++) { // loop to find the element index
+				if (vehicleParkingSlots[i] != null) { // if an element is not empty
+					vehicleType = vehicleParkingSlots[i].getClass().getSimpleName();
+					++total;
+					switch (vehicleType) { // to increment each vehicle type counter
+						case "Car":
+							++car;
+							break;
+						case "Van":
+							++van;
+							++i; // to skip the next slot as well since a van occupied 2
+							// slots
+							break;
+						case "Motorbike":
+							++bike;
+							break;
+					}
+				}
+			}
+			// Percentage calculation
+			int carPercentage, vanPercentage, bikePercentage;
+			if (total == 0) { // if carpark is empty(to avoid arithmeticException)
+				carPercentage = 0;
+				vanPercentage = 0;
+				bikePercentage = 0;
+			} else {
+				carPercentage = (car * 100 / total);
+				vanPercentage = (van * 100 / total);
+				bikePercentage = (bike * 100 / total);
+			}
+
+			System.out.println("Currently Parked Vehicle percentage");
+			System.out.println("------------------------------------");
+			System.out.println("         CAR : " + carPercentage + "%");
+			System.out.println("         VAN : " + vanPercentage + "%");
+			System.out.println("         BIKE:" + bikePercentage + "%");
+			System.out.println("");
+		}
+
+		private void printFirstAndLastVehicle() {
+			// to find the vehicle that was parked first.
+			if (vehicleOrderList.size() != 0) {
+				System.out.println("First vehicle Which was parked");
+				System.out.println("-------------------------------");
+				System.out.println("ID : " + vehicleParkingSlots[vehicleOrderList.get(0)].getPlateID());
+				System.out.println("Type : " + vehicleParkingSlots[vehicleOrderList.get(0)].getClass().getSimpleName());
+				System.out.println("Entry time : " + vehicleParkingSlots[vehicleOrderList.get(0)].getEntryTime());
+			} else {
+				System.out.println("No vehicle in the parking currently");
+			}
+
+			// to find the last vehicle that entered the parking slot.
+			if (lastEntry != null) {
+				System.out.println("Last vehicle which was parked");
+				System.out.println("------------------------------");
+				System.out.println("ID : " + lastEntry.getPlateID());
+				System.out.println("Type : " + lastEntry.getClass().getSimpleName());
+				System.out.println("Entry time : " + lastEntry.getEntryTime());
+			} else {
+				System.out.println("**The Parking space is Empty no vehicles are parked currently**");
+			}
 
 		}
 }
