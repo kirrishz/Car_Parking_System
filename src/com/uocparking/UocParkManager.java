@@ -3,9 +3,15 @@ package com.uocparking;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public abstract class UocParkManager implements CarParkManager {
+public class UocParkManager implements CarParkManager {
+	private Vehicle[] vehicleParkingSlots = new Vehicle[20];//parking space array to store vehicle objects
 	static Scanner input = new Scanner(System.in);
-	
+	private Vehicle lastEntry = null;//to find the last entry of the vehicle which was entered
+
+	private ArrayList<Integer> vehicleOrderList = new ArrayList<Integer>();//is used to have the index of the vehicles
+	//which are currently parked in the last in First out approach
+	private ArrayList<Vehicle> deletedTempVehicleList = new ArrayList<Vehicle>();//stores the vehicle object which had left the parking space
+
 	public static void main(String[] args) {
 		System.out.println(" ---------------------------------------------");
 		System.out.println(" |********-Car Park Management System-********|");
@@ -35,6 +41,7 @@ public abstract class UocParkManager implements CarParkManager {
 	}
 
 	public static void displayMainMenu() {
+		CarParkManager carParkObject = new UocParkManager();
 		while (true) {//infinity loop
 			System.out.println("");
 			System.out.println("1. Add a vehicle to the parking Space");
@@ -46,34 +53,35 @@ public abstract class UocParkManager implements CarParkManager {
 			System.out.print("Enter Selection: ");
 
 			String userInput = input.next();// prompted for input and stored in
-											// the userInput variable
+			// the userInput variable
 			System.out.println();
 
 			switch (userInput.toLowerCase()) {
-			case "1":
-				//carParkObject.addVehicle();
-				break;
-			case "2":
-				//carParkObject.deleteVehicle();
-				break;
-			case "3":
-				//carParkObject.displayCurrentList();
-				break;
-			case "4":
-				//carParkObject.printStatistics();
-				break;
-			case "5":
-				//carParkObject.displayPerDayList();
-				break;
-			case "q":
-				System.exit(0);// terminates the program
-				break;
-			default:
-				System.err.println("\n**Please, Enter a Valid Input**");
-				System.out.println();
+				case "1":
+					carParkObject.addVehicle();
+					break;
+				case "2":
+					carParkObject.deleteVehicle();
+					break;
+				case "3":
+					carParkObject.displayCurrentList();
+					break;
+				case "4":
+					carParkObject.printStatistics();
+					break;
+				case "5":
+					carParkObject.displayPerDayList();
+					break;
+				case "q":
+					System.exit(0);// terminates the program
+					break;
+				default:
+					System.err.println("\n**Please, Enter a Valid Input**");
+					System.out.println();
 			}
 		}
 	}
+
 
 	public void addVehicle() {
 		boolean typeVal = false;
@@ -104,7 +112,7 @@ public abstract class UocParkManager implements CarParkManager {
 
 		do {
 			System.out.print(
-					"Enter entry time/date (HourHour(HH) MinsMins(MM) DayDay(DD) MonthMonth(MM) YearYearYearYear(YYYY): ");
+					"Enter entry time/date ((HH) (MM) (DD) (MM) (YYYY): 2022only not allowed wrong year");
 			hours = input.nextInt();
 			mins = input.nextInt();
 			date = input.nextInt();
@@ -153,14 +161,12 @@ public abstract class UocParkManager implements CarParkManager {
 		System.out.println("Vehicle parked Sucessfully!");
 		System.out.println("No of free slots remaining is " + totalOfSlots());
 	}
-		public int checkForFreeSlot(String VehicleType) {
+		public int checkForFreeSlot (String VehicleType) {
 			for (int i = 0; i < 20; i++) { // iterating through each slot to find a
 				// free spot
 				if (vehicleParkingSlots[i] == null) {
-					if (VehicleType.equalsIgnoreCase("van")) { // if its a van need
-						// to check whether
-						// adjacent slot is
-						// also free
+					if (VehicleType.equalsIgnoreCase("van")) {
+
 						if (vehicleParkingSlots[i + 1] == null) {
 							return i;
 						}
@@ -172,7 +178,7 @@ public abstract class UocParkManager implements CarParkManager {
 			return -1; // if there is no free slots
 		}
 
-		public int totalOfSlots() {
+		public int totalOfSlots () {
 			int number = 0;
 			for (int i = 0; i < 20; i++) {
 				if (vehicleParkingSlots[i] == null) {
@@ -181,7 +187,7 @@ public abstract class UocParkManager implements CarParkManager {
 			}
 			return number;
 		}
-		public void deleteVehicle() {
+		public void deleteVehicle () {
 			boolean foundFlag = false;
 			int i;
 			System.out.print("Enter Plate ID number of the vehicle to be deleted: ");
@@ -198,7 +204,7 @@ public abstract class UocParkManager implements CarParkManager {
 				}
 			}
 			if (!foundFlag) {
-				System.err.println("**Invalid Vehicle Plate ID, Please Try Again**"); 
+				System.err.println("**Invalid Vehicle Plate ID, Please Try Again**");
 				return;
 			}
 			// to display the vehicle leaving
@@ -215,13 +221,13 @@ public abstract class UocParkManager implements CarParkManager {
 			vehicleOrderList.remove(i);
 
 		}
-		public void printStatistics() {
+		public void printStatistics () {
 			printVehiclePercentage(); // method call of the method which prints
 			// vehicle percentage
 			printFirstAndLastVehicle();
 		}
 
-		private void printVehiclePercentage() {
+		private void printVehiclePercentage () {
 			int car = 0, van = 0, bike = 0, total = 0;
 			String vehicleType;
 			for (int i = 0; i < 20; i++) { // loop to find the element index
@@ -263,7 +269,8 @@ public abstract class UocParkManager implements CarParkManager {
 			System.out.println("");
 		}
 
-		private void printFirstAndLastVehicle() {
+
+		private void printFirstAndLastVehicle () {
 			// to find the vehicle that was parked first.
 			if (vehicleOrderList.size() != 0) {
 				System.out.println("First vehicle Which was parked");
@@ -286,5 +293,149 @@ public abstract class UocParkManager implements CarParkManager {
 				System.out.println("**The Parking space is Empty no vehicles are parked currently**");
 			}
 
+		}
+		public void displayCurrentList () {
+			if (vehicleOrderList.size() == 0) {
+				System.out.println("No vehicles are currently available in the parking space");
+			}
+			for (int i = (vehicleOrderList.size() - 1); i >= 0; i--) {
+				int index = vehicleOrderList.get(i);
+				System.out.println("Slot " + (index + 1) + " is Occupied.");
+				System.out.println("ID plate: " + vehicleParkingSlots[index].getPlateID());
+				System.out.println("Entry time: " + vehicleParkingSlots[index].getEntryTime());
+				System.out.println("Type: " + vehicleParkingSlots[index].getClass().getSimpleName());
+				System.out.println("");
+			}
+
+		}
+
+		// Override
+		public void displayPerDayList () {
+			boolean isValidFlag = true;
+			int date = 0, month = 0, year = 0;
+			do {
+				System.out.print("Enter DayDay(DD) MonthMonth(MM) YearYearYearYear(YYYY) to search for Vehicles: ");
+				try {
+					date = Integer.parseInt(input.next());
+					month = Integer.parseInt(input.next());
+					year = Integer.parseInt(input.next());
+					if (date > 0 || date < 31 || month > 0 || month < 12 || year == 2022) {
+						isValidFlag = true;
+					} else {
+						isValidFlag = false;
+						System.err.println("Invalid Date input, Please Try Again");
+					}
+				} catch (Exception ex) {
+					System.err.println("Invalid input, Please Try Again");
+					isValidFlag = false;
+				}
+			} while (!isValidFlag);
+			int count = 0;
+			for (int i = 0; i < 20; i++) {
+				if (vehicleParkingSlots[i] != null) {
+					int objectDate = vehicleParkingSlots[i].getEntryTimeObject().getDay();
+					int objectMonth = vehicleParkingSlots[i].getEntryTimeObject().getMonth();
+					int objectYear = vehicleParkingSlots[i].getEntryTimeObject().getYear();
+					if ((objectDate == date) && (objectMonth == month) && (objectYear == year)) {
+						count++;
+						String type = vehicleParkingSlots[i].getClass().getSimpleName();
+						String id = vehicleParkingSlots[i].getPlateID();
+						System.out.println(count + " : " + type + " Plate ID No : " + id);
+						if (type.equalsIgnoreCase("van")) {
+							i++;
+						}
+					}
+				}
+			}
+			for (int y = 0; y < deletedTempVehicleList.size(); y++) {
+				System.out.println("im here 3");
+				int objDate = deletedTempVehicleList.get(y).getEntryTimeObject().getDay();
+				int objMonth = deletedTempVehicleList.get(y).getEntryTimeObject().getMonth();
+				int objYear = deletedTempVehicleList.get(y).getEntryTimeObject().getYear();
+				if ((objDate == date) && (objMonth == month) && (objYear == year)) {
+					count++;
+					String type = deletedTempVehicleList.get(y).getClass().getSimpleName();
+					String id = deletedTempVehicleList.get(y).getPlateID();
+					System.out.println(count + " : " + type + " ID No : " + id);
+					if (type.equalsIgnoreCase("van")) {
+						y++;
+					}
+				}
+			}
+
+			if (count == 0) {
+				System.out.println("**No vehicles were currently parked on " + date + "-" + month + "-" + year + "**");
+			}
+		}
+
+		// Override
+		public void displayParkingCharges () {
+			boolean isValidFlag = true;
+			int currentHour = 0, curentMins = 0;
+			do { // loop to repeat until correct time format is being entered
+				System.out.print("Enter current time/date (HourHour(HH) MinsMins(MM):");
+				try {
+					currentHour = Integer.parseInt(input.next());
+					curentMins = Integer.parseInt(input.next());
+					if (currentHour < 0 || currentHour > 24 || curentMins < 0 || curentMins > 60) {
+						isValidFlag = false;
+						System.err.println("Invalid Time input, Please Try Again");
+					}
+				} catch (Exception e) {
+					System.err.println("Invalid input, Please Try Again");
+					isValidFlag = false;
+				}
+			} while (!isValidFlag);
+
+			int getHour, getMin, differenceMin, differenceHour;
+
+			for (int i = 0; i < 20; i++) {
+				if (vehicleParkingSlots[i] != null) {
+					getHour = vehicleParkingSlots[i].getEntryTimeObject().getHours();
+					getMin = vehicleParkingSlots[i].getEntryTimeObject().getMins();
+
+					if (curentMins < getMin) {
+						differenceMin = 60 + curentMins - getMin;
+						if (currentHour == 00) {
+							currentHour = 23;
+						} else {
+							currentHour--;
+						}
+					} else {
+						differenceMin = curentMins - getMin;
+					}
+
+					if (currentHour < getHour) {
+						differenceHour = currentHour + 24 - getHour;
+					} else {
+						differenceHour = currentHour - getHour;
+					}
+
+					double charge = 0;
+					int x = 1;
+					double hoursParked = Math.ceil(differenceHour + (differenceMin * 1.0 / 60));
+
+					if (hoursParked > 6) {
+						charge = 30;
+					} else {
+						if (hoursParked > 3) {
+							charge = 9;
+							x = 4;
+						}
+					}
+					for (; x <= hoursParked; x++) {
+						if (hoursParked > 3) {
+							charge += 3;
+						} else {
+							charge += 3;
+						}
+					}
+					System.out.println("Vehicle ID : " + vehicleParkingSlots[i].getPlateID() + "   Charge: " + charge);
+					String type = vehicleParkingSlots[i].getClass().getSimpleName();
+					if (type.equalsIgnoreCase("Van")) {
+						++i;
+					}
+				}
+			}
 		}
 }
