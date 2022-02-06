@@ -152,7 +152,7 @@ public abstract class UocParkManager implements CarParkManager {
 		System.out.println("");
 		System.out.println("Vehicle parked Sucessfully!");
 		System.out.println("No of free slots remaining is " + totalOfSlots());
-		//_______
+	}
 		public int checkForFreeSlot(String VehicleType) {
 			for (int i = 0; i < 20; i++) { // iterating through each slot to find a
 				// free spot
