@@ -269,6 +269,7 @@ public class UocParkManager implements CarParkManager {
 			System.out.println("");
 		}
 
+
 		private void printFirstAndLastVehicle () {
 			// to find the vehicle that was parked first.
 			if (vehicleOrderList.size() != 0) {
