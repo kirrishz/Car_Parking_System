@@ -75,5 +75,82 @@ public abstract class UocParkManager implements CarParkManager {
 		}
 	}
 
+	public void addVehicle() {
+		boolean typeVal = false;
+		String vehicleType = ""; // String variable to hold the vehicle type
+		while (!typeVal) { // loop to make sure only valid type is being entered
+			System.out.print("Enter vehicle type(car/bike/van): ");
+			vehicleType = input.next();
+			if (vehicleType.equalsIgnoreCase("car") || vehicleType.equalsIgnoreCase("van")
+					|| vehicleType.equalsIgnoreCase("bike")) {
+				typeVal = true;
+			} else {
+				System.err.println("\n**Please, Enter a Valid Input**");
+				System.out.println("");
+			}
+		}
 
+		int checkFreeSpace = checkForFreeSlot(vehicleType);
+		if (checkFreeSpace == -1) {
+			System.out.println("**Parking Slot Full, No free slot available!**");
+			return;
+		}
+
+		System.out.print("Enter Vehicle Plate ID number: ");
+		String id = input.next();
+		System.out.print("Enter Vehicle brand name: ");
+		String brand = input.next();
+		int hours, mins, date, month, year;
+
+		do {
+			System.out.print(
+					"Enter entry time/date (HourHour(HH) MinsMins(MM) DayDay(DD) MonthMonth(MM) YearYearYearYear(YYYY): ");
+			hours = input.nextInt();
+			mins = input.nextInt();
+			date = input.nextInt();
+			month = input.nextInt();
+			year = input.nextInt();
+		} while (hours < 0 || hours > 24 || mins < 0 || mins > 60 || date < 0 || date > 31 || month < 0 || month > 12
+				|| year != 2022);
+		// validate the date and time
+		DateTime entryTime = new DateTime(hours, mins, date, month, year);
+		vehicleOrderList.add(checkFreeSpace);
+
+		switch (vehicleType) {
+			case "car":
+				System.out.print("Enter no of doors: ");
+				while (!input.hasNextInt()) {
+					System.err.print("Please, Enter a integer value for No of Doors : ");
+					input.next();// validating user input based on string value
+				}
+				int noOfDoors = input.nextInt();
+				System.out.print("Enter car color: ");
+				String color = input.next();
+				vehicleParkingSlots[checkFreeSpace] = new Car(id, brand, entryTime, noOfDoors, color);
+				break;
+			case "van":
+				System.out.print("Enter cargo volume: ");
+				while (!input.hasNextDouble()) {
+					System.err.print("Please, Enter a integer value for Cargo Volume : ");
+					input.next();// validating user input based on string value
+				}
+				double volume = input.nextDouble();
+				vehicleParkingSlots[checkFreeSpace] = new Van(id, brand, entryTime, volume);
+				vehicleParkingSlots[checkFreeSpace + 1] = new Van(id, brand, entryTime, volume);
+				break;
+			case "bike":
+				System.out.print("Enter engine size: ");
+				while (!input.hasNextInt()) {
+					System.err.print("Please, Enter a integer value for engine size : ");
+					input.next();// validating user input based on string value
+				}
+				int size = input.nextInt();
+				vehicleParkingSlots[checkFreeSpace] = new MotorBike(id, brand, entryTime, size);
+				break;
+		}
+		lastEntry = vehicleParkingSlots[checkFreeSpace];
+		System.out.println("");
+		System.out.println("Vehicle parked Sucessfully!");
+		System.out.println("No of free slots remaining is " + totalOfSlots());
+		//_______
 }
