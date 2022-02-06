@@ -153,4 +153,38 @@ public abstract class UocParkManager implements CarParkManager {
 		System.out.println("Vehicle parked Sucessfully!");
 		System.out.println("No of free slots remaining is " + totalOfSlots());
 		//_______
+		public void deleteVehicle() {
+			boolean foundFlag = false;
+			int i;
+			System.out.print("Enter Plate ID number of the vehicle to be deleted: ");
+			String id = input.next();
+
+			for (i = 0; i < 20; i++) { // loop to find the element index
+				if (vehicleParkingSlots[i] != null) { // to check whether an object
+					// is there (To avoid
+					// nullPointerException)
+					if (vehicleParkingSlots[i].getPlateID().equalsIgnoreCase(id)) {
+						foundFlag = true;
+						break; // end for loop once the value is found
+					}
+				}
+			}
+			if (!foundFlag) {
+				System.err.println("**Invalid Vehicle Plate ID, Please Try Again**"); 
+				return;
+			}
+			// to display the vehicle leaving
+			String VehicleType = vehicleParkingSlots[i].getClass().getSimpleName();
+			System.out.println("A " + VehicleType + " left the parking space.");
+			deletedTempVehicleList.add(vehicleParkingSlots[i]);
+			if (VehicleType.equalsIgnoreCase("van")) {
+				// to physically remove the element from the vehicle array
+				vehicleParkingSlots[i] = null;
+				vehicleParkingSlots[i + 1] = null;
+			} else {
+				vehicleParkingSlots[i] = null;
+			}
+			vehicleOrderList.remove(i);
+
+		}
 }
